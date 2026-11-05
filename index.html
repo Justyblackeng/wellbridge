@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>WellBridge – student wellbeing</title>
+<meta name="description" content="Private wellbeing support for university students: check in, track your mood, book a counselor and reach a verified care team.">
+<meta name="theme-color" content="#0B7A4B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B7A4B'/%3E%3Cpath d='M4 21h24M7 21q9-13 18 0M11 21v-5M16 21v-7M21 21v-5' stroke='white' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fff;--soft:#EAF6EF;--ink:#10261B;--muted:#5A6F63;--line:#0B7A4B;--g:#0B7A4B;--gd:#075A38;--danger:#B3261E;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Nunito,system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer;background:none}
+:focus-visible{outline:3px solid var(--gd);outline-offset:2px}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:square;stroke-linejoin:miter;flex:none}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+nav{border-right:1.5px solid var(--line);padding:24px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;background:var(--bg)}
+.brand{font-weight:800;font-size:23px;padding:0 10px 18px;display:flex;align-items:center;gap:10px;color:var(--g)}
+.logo{width:32px;height:32px;stroke-width:2}
+.tab{display:flex;align-items:center;gap:12px;border:1.5px solid transparent;padding:11px 12px;font-weight:600;color:var(--muted);width:100%;text-align:left}
+.tab[aria-current=page]{background:var(--g);color:#fff}
+.tab:hover:not([aria-current]){border-color:var(--line);color:var(--g)}
+.sos{margin-top:auto;border:2px solid var(--danger);color:var(--danger);font-weight:800;padding:11px}
+main{padding:22px 28px;max-width:1180px;width:100%}
+h1{font-size:28px;line-height:1.2;margin:0 0 4px;font-weight:800}
+h2{font-size:17px;margin:24px 0 10px;font-weight:800}
+p{margin:0 0 10px}.muted{color:var(--muted)}
+.card{border:1.5px solid var(--line);padding:18px;background:var(--bg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.hero{background:var(--g);color:#fff}
+.btn{border:2px solid var(--g);background:var(--g);color:#fff;font-weight:800;padding:10px 20px}
+.btn:hover{background:var(--gd);border-color:var(--gd)}
+.btn.alt{background:var(--bg);color:var(--g)}
+.btn.alt:hover{background:var(--soft)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.hero .btn{background:#fff;color:var(--g);border-color:#fff}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1.5px solid var(--line);padding:9px 16px;font-weight:600;color:var(--g);display:flex;align-items:center}
+.chip:hover{background:var(--soft)}
+.chip[aria-pressed=true]{background:var(--g);color:#fff}
+.moods .chip{padding:8px}.moods svg{width:34px;height:34px}
+.view{display:none}.view.on{display:block}
+.pro{display:flex;gap:14px;align-items:center;padding:12px;border:1.5px solid var(--line);width:100%;text-align:left;margin-bottom:10px}
+.pro[aria-pressed=true]{background:var(--soft);box-shadow:inset 4px 0 0 var(--g)}
+.av{width:42px;height:42px;border:1.5px solid var(--g);display:grid;place-items:center;font-weight:800;color:var(--g);flex:none}
+.bars{display:flex;align-items:flex-end;gap:8px;height:160px;margin:26px 0 6px;border-bottom:2px solid var(--g)}
+.bar{flex:1;background:var(--g);position:relative}.bar span{position:absolute;top:-22px;left:0;right:0;text-align:center;font-size:13px;font-weight:600}
+.labels{display:flex;gap:8px;font-size:13px;color:var(--muted)}.labels div{flex:1;text-align:center}
+.breath{width:140px;height:140px;border:2px solid var(--g);border-radius:50%;margin:16px auto;display:grid;place-items:center;font-weight:800;color:var(--g);transition:transform 4s ease-in-out}
+.breath.in{transform:scale(1.3);background:var(--soft)}
+.res{background:var(--soft);border-left:4px solid var(--g);padding:14px;margin-top:14px}
+dialog{border:2px solid var(--danger);padding:22px;max-width:400px;width:calc(100% - 32px);background:#fff;color:var(--ink)}
+dialog::backdrop{background:rgba(16,38,27,.55)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--gd);color:#fff;padding:10px 18px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.toast.on{opacity:1}
+.top{display:none}
+@media (max-width:820px){
+.app{grid-template-columns:1fr}
+nav{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));border-right:0;border-top:1.5px solid var(--line);z-index:10;gap:2px}
+nav .brand,nav .sos{display:none}
+.tab{flex-direction:column;gap:2px;font-size:12px;padding:6px 2px;align-items:center;justify-content:center}
+main{padding:18px 16px 100px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.top .brand{padding:0}.top .sos{margin:0;padding:7px 12px}
+h1{font-size:24px}}
+.slink{margin-top:auto;border:0;font-size:13px;color:var(--muted);text-decoration:underline;text-align:left;padding:6px 10px}
+.slink+.sos{margin-top:8px}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:12px;overflow:hidden}
+.art{width:150px;height:90px;stroke:#fff;stroke-width:1.5;flex:none}
+.ico{width:44px;height:44px;background:var(--soft);border:1.5px solid var(--line);display:grid;place-items:center;color:var(--g);margin-bottom:10px}
+.av{width:52px;height:52px;background:var(--soft)}.av svg{width:34px;height:34px}
+.stat b{font-size:28px;color:var(--g);display:block;line-height:1.1}
+.li{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--line);padding:10px 14px;margin-bottom:8px}
+.dot{display:inline-block;width:10px;height:10px;border:2px solid var(--g);margin-right:8px}
+@media (max-width:820px){nav .slink{display:none}.art{width:90px}}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.li small{display:block;color:var(--muted)}
+.tip{background:var(--g);color:#fff;padding:18px;margin-top:18px}
+.tip p{margin:4px 0 0}
+@media (min-width:821px){.art{width:170px;height:100px}.hero{padding:18px 22px}h1{font-size:26px}}
+@media (max-width:980px){.cols{grid-template-columns:1fr}}
+body{background:#DCEFE4;font-size:15px}
+nav{background:var(--gd);border-color:var(--gd)}
+nav .brand{color:#fff}
+nav .tab{color:rgba(255,255,255,.85)}
+nav .tab:hover:not([aria-current]){border-color:rgba(255,255,255,.6);color:#fff}
+nav .tab[aria-current=page]{background:#fff;color:var(--g)}
+nav .slink{color:rgba(255,255,255,.8)}
+nav .sos{background:#fff;border-color:#fff}
+.card{padding:14px}
+.grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+h2{font-size:15px;margin:18px 0 8px}
+p{margin:0 0 8px}
+.btn{padding:7px 16px;font-size:14px}
+.chip{padding:6px 13px;font-size:14px}
+.moods .chip{padding:5px}.moods svg{width:28px;height:28px}
+.stat b{font-size:22px}
+.ico{width:36px;height:36px;margin-bottom:8px}.ico svg{width:20px;height:20px}
+.av{width:42px;height:42px}.av svg{width:28px;height:28px}
+.pro{padding:9px 12px;margin-bottom:8px}
+.li{padding:8px 12px;margin-bottom:6px;background:#fff;font-size:14px}
+.res{background:#fff;padding:12px}
+.bars{height:130px}
+.breath{width:110px;height:110px;margin:10px auto}
+.tip{padding:14px 18px;margin-top:14px}
+.row{gap:8px}
+.card{border:1.5px solid #BFE0CE;border-radius:20px;box-shadow:0 6px 16px rgba(11,122,75,.09);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(11,122,75,.16)}
+.hero{position:relative;border:0;background:linear-gradient(135deg,#0B7A4B,#19A86B)}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.1)}
+.hero::before{width:180px;height:180px;right:-50px;top:-70px}
+.hero::after{width:90px;height:90px;right:120px;bottom:-45px}
+.hero>*{position:relative;z-index:1}
+.tip{border-radius:20px;background:linear-gradient(135deg,#075A38,#0B7A4B)}
+.btn{border-radius:999px;box-shadow:0 3px 8px rgba(11,122,75,.25)}
+.btn.alt{box-shadow:none}
+.chip{border-radius:999px}
+.tab{border-radius:14px}
+.ico{border-radius:14px;background:linear-gradient(135deg,#EAF6EF,#CFEBDB)}
+.av{border-radius:50%;background:linear-gradient(135deg,#EAF6EF,#CFEBDB)}
+.pro{border-radius:18px;background:#fff}
+.pro[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--g);background:var(--soft)}
+.li{border-radius:14px;border-color:#BFE0CE}
+.dot{border-radius:50%}
+.res{border-radius:16px;border:1.5px solid #BFE0CE;border-left:5px solid var(--g)}
+.bar{border-radius:10px 10px 0 0}
+.bars{border-bottom-color:#BFE0CE}
+.sos{border-radius:999px}
+.slink{border-radius:8px}
+dialog{border-radius:24px}
+.toast{border-radius:999px}
+input{border-radius:12px!important}
+@media (min-width:821px){nav{border-radius:0 28px 28px 0;background:linear-gradient(180deg,#075A38,#0B7A4B)}}
+@media (max-width:820px){nav{border-radius:22px 22px 0 0;background:linear-gradient(90deg,#075A38,#0B7A4B)}}
+.chat{display:flex;flex-direction:column;height:min(580px,calc(100vh - 220px));min-height:380px}
+.msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:2px}
+.m{max-width:84%;padding:9px 14px;border-radius:18px;white-space:pre-wrap}
+.m.bot{background:var(--soft);border-bottom-left-radius:6px;align-self:flex-start}
+.m.me{background:var(--g);color:#fff;border-bottom-right-radius:6px;align-self:flex-end}
+#chatIn{border-radius:999px!important}
+.call{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:8px;border:1.5px solid #CFE6D8;border-radius:18px;text-decoration:none;color:var(--ink);background:#fff}
+.call:hover{background:var(--soft)}
+.call small{display:block;color:var(--muted);font-size:13px}
+.call .ci{width:40px;height:40px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;flex:none}
+.call.em .ci{background:var(--danger)}.call.em .num{color:var(--danger)}
+.call .num{font-size:14px;color:var(--g);white-space:nowrap}
+dialog{border:1.5px solid #CFE6D8;box-shadow:0 14px 40px rgba(16,38,27,.16);max-height:90vh;overflow:auto}
+.card{box-shadow:0 2px 10px rgba(11,122,75,.05)}
+.card:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(11,122,75,.09)}
+.btn{box-shadow:0 2px 6px rgba(11,122,75,.14)}
+[hidden]{display:none!important}
+body:not(.authed) .app{display:none}body.authed #landing{display:none}
+#landing{position:relative;overflow:hidden;min-height:100vh;padding:0 28px 20px}
+.blob{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(25,168,107,.28),rgba(25,168,107,0));animation:float 9s ease-in-out infinite;pointer-events:none}
+.b1{width:340px;height:340px;top:-90px;right:-60px}.b2{width:260px;height:260px;top:520px;left:-80px;animation-delay:-3s}.b3{width:300px;height:300px;bottom:200px;right:-90px;animation-delay:-6s}
+@keyframes float{50%{transform:translateY(24px) scale(1.06)}}
+#landing>*:not(.blob){position:relative;z-index:1}
+.lbar{display:flex;justify-content:space-between;align-items:center;max-width:1180px;margin:0 auto;padding:16px 0}
+.lbar .brand{color:var(--g);padding:0}
+.lhero{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;max-width:1180px;margin:10px auto 0;align-items:center}
+.big{font-size:44px;line-height:1.1;margin:0 0 12px}
+.pulse{margin-top:22px;background:#fff}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--soft);color:var(--g);font-weight:800;padding:5px 12px;border-radius:999px}
+.live{width:10px;height:10px;border-radius:50%;background:var(--g);animation:ring 1.6s ease-out infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(11,122,75,.5)}100%{box-shadow:0 0 0 12px rgba(11,122,75,0)}}
+.wave{width:100%;height:110px;margin:8px 0}
+.wave path{stroke-width:3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.wave .base{stroke:#CFE6D8}
+.wave .ecg{stroke:var(--g);stroke-dasharray:28 72;animation:trace 3s linear infinite}
+@keyframes trace{from{stroke-dashoffset:28}to{stroke-dashoffset:-72}}
+.ok{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:14px;color:var(--g);background:var(--soft);padding:4px 12px;border-radius:999px;animation:pop .6s both}
+.ok:nth-child(2){animation-delay:.25s}.ok:nth-child(3){animation-delay:.5s}
+.ok svg{width:16px;height:16px;stroke-width:2.5}
+@keyframes pop{from{opacity:0;transform:scale(.8)}}
+.auth{padding:20px;box-shadow:0 12px 36px rgba(11,122,75,.13)}
+.seg{display:flex;background:var(--soft);border-radius:999px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;border:0;border-radius:999px;padding:8px;font-weight:800;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--g);color:#fff}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px solid #CFE6D8;border-radius:999px;padding:10px;font-weight:700;background:#fff}
+.gbtn:hover{background:var(--soft)}.gbtn svg{width:20px;height:20px}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:14px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:#CFE6D8}
+.auth label{display:block;font-weight:600;font-size:14px;margin-bottom:10px}
+.auth label input:not([type=checkbox]){display:block;width:100%;margin-top:4px;padding:10px 14px;border:1.5px solid #CFE6D8;font:inherit;background:#fff}
+.auth .agree{display:flex;gap:8px;align-items:flex-start;font-weight:400}
+.auth .agree input{margin-top:4px;accent-color:var(--g)}
+.auth a,.lfoot a{color:var(--g);font-weight:600}
+.err{color:var(--danger);font-size:14px;min-height:20px;margin:0 0 6px}
+.lsec{max-width:1180px;margin:40px auto 0}
+.lh{font-size:24px;margin:0 0 14px}
+.lgrid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.secband{background:linear-gradient(135deg,#075A38,#0B7A4B);color:#fff;border-radius:28px;padding:28px}
+.secband p{opacity:.92}
+.sec{background:rgba(255,255,255,.12);border-radius:18px;padding:14px}
+.sec p{margin:2px 0 0;font-size:14px}
+.ci2{width:36px;height:36px;border-radius:12px;background:#fff;color:var(--g);display:grid;place-items:center;margin-bottom:8px}
+.lfoot{max-width:1180px;margin:36px auto 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:14px}
+@media (max-width:900px){.lhero{grid-template-columns:1fr}.big{font-size:32px}#landing{padding:0 16px 20px}}
+details{background:#fff;border:1.5px solid #CFE6D8;border-radius:16px;padding:12px 16px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--g);font-size:20px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:8px 0 0;color:var(--muted)}
+.err.ok2{color:var(--g);font-weight:600}
+.qi{width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.qi[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--g)}
+.pri{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:800}
+.pri.High{background:#FFD9DE;color:#8A1C2B}.pri.Medium{background:#FFE7A8;color:#5A4A1C}
+.thread{max-height:230px;min-height:60px}
+.cin{flex:1;min-width:0;padding:9px 16px;border:1.5px solid #CFE6D8;border-radius:999px;font:inherit}
+#legal{max-width:640px}
+#lBody h3{font-size:15px;margin:14px 0 4px}
+#lBody p{margin:0 0 6px;font-size:14.5px}
+body.staffmode nav,body.staffmode .top .sos{display:none}
+body.staffmode .app{grid-template-columns:1fr}
+body.staffmode main{padding-bottom:30px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.wave .ecg{stroke-dasharray:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<div id="landing">
+<span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+<header class="lbar"><div class="brand"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 21h28M2 26h28M5 21q11-16 22 0M10 21v-6M16 21v-8M22 21v-6"/></svg>WellBridge</div><div class="row"><button class="btn alt" data-mode="in">Sign in</button><button class="btn" data-mode="up">Sign up</button></div></header>
+<div class="lhero">
+<div>
+<h1 class="big">Your wellbeing, bridged to support.</h1>
+<p class="muted" style="font-size:17px;max-width:520px">Check in, track how you feel and reach a counselor fast. Free, private and always here for students.</p>
+<div class="card pulse"><div class="row" style="justify-content:space-between;align-items:center"><span class="badge"><span class="live"></span>Health in check</span><span class="muted" style="font-size:14px">Your health is our priority</span></div>
+<svg class="wave" viewBox="0 0 600 120" preserveAspectRatio="none"><path class="base" d="M0 60H130l14-10 12 10 12-42 16 88 14-68 10 22H330l14-10 12 10 12-42 16 88 14-68 10 22H600"/><path class="ecg" pathLength="100" d="M0 60H130l14-10 12 10 12-42 16 88 14-68 10 22H330l14-10 12 10 12-42 16 88 14-68 10 22H600"/></svg>
+<div class="row"><span class="ok"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Mood steady</span><span class="ok"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Stress low</span><span class="ok"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Support ready</span></div></div>
+</div>
+<div class="card auth" id="auth">
+<div class="seg"><button data-mode="up" aria-pressed="true">Sign up</button><button data-mode="in" aria-pressed="false">Sign in</button></div>
+<div id="gBtn" style="display:flex;justify-content:center;min-height:44px"></div>
+<div class="or"><span>or use email</span></div>
+<form id="authForm" novalidate>
+<label id="nameRow">Name<input id="aName" autocomplete="name" placeholder="Your first name"></label>
+<label id="emailRow">University email<input id="aEmail" type="email" autocomplete="email" placeholder="you@university.edu"></label>
+<label id="passRow">Password<input id="aPass" type="password" autocomplete="current-password" placeholder="At least 8 characters"></label>
+<div id="forgotRow" style="margin:-4px 0 10px;font-size:14px"></div>
+<label id="agreeRow" class="agree"><input type="checkbox" id="aAgree"><span>I agree to the <a href="#" data-legal="terms">Terms</a> and <a href="#" data-legal="privacy">Privacy Policy</a>.</span></label>
+<p class="err" id="authMsg" role="alert"></p>
+<button class="btn" id="authGo" type="submit" style="width:100%;padding:10px">Create account</button>
+</form>
+
+</div></div>
+<section class="lsec"><h2 class="lh">What you’ll find inside</h2><div class="grid lgrid"><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div><b>Weekly check-in</b><p class="muted" style="margin:2px 0 0">Log your mood and stress in 3 taps.</p></div><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-9M15 6h6v6"/></svg></div><b>My journey</b><p class="muted" style="margin:2px 0 0">See your mood trend before you book.</p></div><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 5h18v16H3zM3 10h18M8 3v4M16 3v4"/></svg></div><b>Counselor booking</b><p class="muted" style="margin:2px 0 0">Pick a time in under a minute.</p></div><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 012 2v15a2 2 0 00-2-2H4zM20 4h-6a2 2 0 00-2 2v15a2 2 0 012-2h6z"/></svg></div><b>Help library</b><p class="muted" style="margin:2px 0 0">Breathing, sleep and exam guides.</p></div><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4zM8 9h8M8 12h5"/></svg></div><b>Ask WellBridge</b><p class="muted" style="margin:2px 0 0">An AI assistant for quick answers.</p></div><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></div><b>Urgent help</b><p class="muted" style="margin:2px 0 0">One-tap calls to emergency contacts.</p></div><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4"/></svg></div><b>Care team</b><p class="muted" style="margin:2px 0 0">Verified responders reply when you need support.</p></div></div></section>
+<section class="lsec"><div class="secband"><h2 class="lh" style="color:#fff">Your information stays yours</h2><p>We never sell your data or share it with advertisers. Verified care team members see a flagged check-in only if you allow it. We act without consent only if someone is at serious risk or the law requires it.</p><div class="grid"><div class="sec"><div class="ci2"><svg viewBox="0 0 24 24"><path d="M6 11h12v10H6zM8 11V7a4 4 0 018 0v4"/></svg></div><b>Encrypted and secure</b><p>Your data is protected in transit and at rest.</p></div><div class="sec"><div class="ci2"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4"/></svg></div><b>Shared only with your consent</b><p>Verified care staff see a flagged check-in only if you allow it.</p></div><div class="sec"><div class="ci2"><svg viewBox="0 0 24 24"><path d="M3 12s4-7 9-7 9 7 9 7-4 7-9 7-9-7-9-7zM4 4l16 16"/></svg></div><b>Anonymous check-ins</b><p>Staff only see grouped trends, never names.</p></div><div class="sec"><div class="ci2"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 9h8M8 13h5"/></svg></div><b>Not linked to grades</b><p>Support here stays separate from your record.</p></div></div></div></section>
+<dialog id="faq" style="max-width:560px;border-color:#CFE6D8"><h2 style="margin-top:0">Questions, answered</h2><details><summary>Is WellBridge free?</summary><p>Yes. Check-ins, the library, the assistant and counselor booking are free for students.</p></details><details><summary>Who can see my check-ins?</summary><p>Only you, unless you turn on care team contact. Then verified, approved responders can see flagged check-ins and reply. Counselors see a mood summary only if you share it.</p></details><details><summary>Is the AI assistant a therapist?</summary><p>No. It gives quick tips and points you to the right service. It cannot diagnose or handle emergencies.</p></details><details><summary>What if I’m in crisis?</summary><p>Tap Urgent help any time to call emergency services, campus security or a crisis helpline.</p></details><details><summary>Can I delete my data?</summary><p>Yes. You can ask for a copy or deletion of your data at any time.</p></details><button class="btn" id="faqX" style="margin-top:8px">Close</button></dialog>
+<footer class="lfoot"><span>© WellBridge</span><span class="row" style="align-items:center"><button class="btn alt" data-faq>FAQ</button><button class="btn alt" data-staff>Care team application</button><a href="#" data-legal="terms">Terms</a><a href="#" data-legal="privacy">Privacy Policy</a></span></footer>
+</div>
+<dialog id="legal"><h2 id="lTitle" style="margin-top:0"></h2><div id="lBody"></div><button class="btn" id="lClose" style="margin-top:12px">Close</button><p class="muted" style="font-size:12px;margin:10px 0 0">Draft text for the prototype. Have a lawyer review before launch.</p></dialog>
+<div class="app">
+<nav aria-label="Main">
+<div class="brand"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 21h28M2 26h28M5 21q11-16 22 0M10 21v-6M16 21v-8M22 21v-6"/></svg>WellBridge</div>
+<button class="tab" data-go="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v11h14V10M10 21v-6h4v6"/></svg>Home</button>
+<button class="tab" data-go="checkin"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Check-in</button>
+<button class="tab" data-go="journey"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-9M15 6h6v6"/></svg>Journey</button>
+<button class="tab" data-go="book"><svg viewBox="0 0 24 24"><path d="M3 5h18v16H3zM3 10h18M8 3v4M16 3v4"/></svg>Book</button>
+<button class="tab" data-go="library"><svg viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 012 2v15a2 2 0 00-2-2H4zM20 4h-6a2 2 0 00-2 2v15a2 2 0 012-2h6z"/></svg>Library</button>
+<button class="tab" data-go="chat"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4zM8 9h8M8 12h5"/></svg>Ask</button>
+<button class="slink" data-signout style="margin-top:0">Sign out</button>
+<button class="sos" data-sos>Urgent help</button>
+</nav>
+<main>
+<div class="top"><div class="brand"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 21h28M2 26h28M5 21q11-16 22 0M10 21v-6M16 21v-8M22 21v-6"/></svg>WellBridge</div><button class="sos" data-sos>Urgent help</button></div>
+
+<section class="view" id="home">
+<h1 id="hello">How are you today?</h1>
+<p class="muted">Private. Never linked to your grades.</p>
+<div class="card hero"><div><b style="font-size:19px">Weekly check-in</b><p>3 taps. Anonymous.</p><button class="btn" data-go="checkin">Start</button></div><svg class="art" viewBox="0 0 160 90" fill="none"><circle cx="118" cy="28" r="14"/><path d="M118 4v6M118 46v6M94 28h6M136 28h6M101 11l4 4M131 41l4 4M135 11l-4 4"/><path d="M0 84q36-46 76-14t84-30M0 90q50-30 90-8t70-10"/></svg></div>
+<div class="grid" style="margin-top:14px">
+<div class="card stat"><b id="hStreak">0</b><span class="muted">check-ins so far</span></div>
+<div class="card stat"><b id="hMood">3/5</b><span class="muted">last mood</span></div>
+<div class="card stat"><b id="hNext">None yet</b><span class="muted">next session</span></div>
+<div class="card stat"><b>24/7</b><span class="muted">urgent help</span></div></div>
+<h2>Quick actions</h2>
+<div class="grid">
+<div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4z"/></svg></div><b>Talk to someone</b><p class="muted">Free. No reason needed.</p><button class="btn alt" data-go="book">Book</button></div>
+<div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M2 12q5-8 10 0t10 0"/></svg></div><b>Feeling tense?</b><p class="muted">1-minute breathing.</p><button class="btn alt" data-go="library">Breathe</button></div>
+<div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 9h8M8 13h5"/></svg></div><b>Exam stress</b><p class="muted">Short guides.</p><button class="btn alt" data-go="library">Read</button></div>
+<div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-9M15 6h6v6"/></svg></div><b>My journey</b><p class="muted">See your mood trend.</p><button class="btn alt" data-go="journey">Open</button></div></div>
+<div class="cols" style="margin-top:6px">
+<div><h2>Quick answers</h2><div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4z"/></svg></div><b>Ask the assistant</b><p class="muted">Instant, private help any time.</p><button class="btn" data-go="chat">Chat now</button></div></div></div>
+<div class="tip"><b>Tip of the day</b><p>Ten minutes outside between study blocks resets your focus better than scrolling.</p></div>
+<p style="margin-top:26px"><button class="slink" style="margin:0" data-faq>FAQ</button> <button class="slink" style="margin:0" data-signout>Sign out</button></p></section>
+
+<section class="view" id="checkin">
+<h1>Weekly check-in</h1><p class="muted">Anonymous. 20 seconds.</p>
+<div class="cols" style="align-items:start"><div class="card">
+<b>Mood</b><div class="row moods" id="moods" style="margin-top:8px"></div>
+<h2>Stress this week</h2><div class="row" id="stress"></div>
+<h2>Main cause</h2><div class="row" id="cause"></div>
+<h2>Care team</h2><button class="chip" id="consentChk" aria-pressed="false">Allow a verified care team member to contact me if I’m struggling</button>
+<p style="margin-top:18px"><button class="btn" id="sendCheck" disabled>See result</button></p>
+<div class="res" id="result" hidden></div>
+</div>
+<div class="card" style="background:var(--soft)"><b>Why check in?</b>
+<div class="li" style="margin-top:10px;background:#fff"><span>Spot patterns<small>See your trend in Journey</small></span></div>
+<div class="li" style="background:#fff"><span>Get support sooner<small>Book in one tap if needed</small></span></div>
+<div class="li" style="background:#fff"><span>Stay private<small>Never linked to grades</small></span></div></div></div></section>
+
+<section class="view" id="journey">
+<h1>My journey</h1><p class="muted">Only you can see this.</p>
+<div class="grid" id="jstats"></div>
+<div class="cols" style="margin-top:12px"><div class="card"><b>Mood over time</b><div id="jchart"></div></div><div><b>Recent check-ins</b><div id="jlist" style="margin-top:8px"></div></div></div>
+<div class="card" id="care" style="margin-top:12px"></div>
+<div class="card" style="margin-top:12px"><b>Contact number (optional)</b><p class="muted" style="margin:2px 0 10px">Used only if the care team must reach you urgently.</p><div class="row" style="flex-wrap:nowrap"><input class="cin" id="phoneIn" type="tel" autocomplete="tel" placeholder="+234 800 000 0000" aria-label="Phone number"><button class="btn" id="phoneSave">Save</button></div></div>
+<div class="card" style="margin-top:12px"><b>Your data</b><p class="muted" style="margin:2px 0 10px">Download or delete everything we hold about you.</p><div class="row"><button class="btn alt" id="exportBtn">Download my data</button><button class="btn alt" id="delBtn" style="color:var(--danger);border-color:var(--danger)">Delete my account</button></div></div>
+<p style="margin-top:14px" class="row"><button class="btn" data-go="checkin">New check-in</button><button class="btn alt" data-go="book">Book a counselor</button></p>
+</section>
+
+<section class="view" id="book">
+<h1>Book a counselor</h1><p class="muted">Free and confidential.</p>
+<div class="card" id="bmood" style="margin-top:12px"></div>
+<div class="cols" style="align-items:start"><div><h2>Who</h2><div id="pros"></div></div>
+<div><h2>Day</h2><div class="row" id="days"></div>
+<h2>Time</h2><div class="row" id="times"></div>
+<h2>Format</h2><div class="row" id="kind"></div></div></div>
+<p style="margin-top:20px"><button class="btn" id="confirm" disabled>Confirm</button></p>
+<div class="res" id="booked" hidden></div>
+<h2>Your bookings</h2><div id="myBookings"></div>
+</section>
+
+<section class="view" id="library">
+<h1>Library</h1><p class="muted">Short help, any time.</p>
+<div class="cols" style="align-items:start"><div class="card" style="text-align:center"><b>Breathing</b>
+<div class="breath" id="breath">Ready</div><button class="btn" id="bBtn">Start</button></div>
+<div class="card"><b>Quick grounding</b>
+<div class="li" style="margin-top:10px"><span>5 things you can see</span></div>
+<div class="li"><span>4 things you can touch</span></div>
+<div class="li"><span>3 things you can hear</span></div>
+<div class="li"><span>2 things you can smell</span></div>
+<div class="li"><span>1 thing you can taste</span></div></div></div>
+<h2>Guides</h2><div class="grid" id="guides"></div>
+<div class="res" id="guideOut" hidden></div>
+</section>
+
+<section class="view" id="chat">
+<h1>Ask WellBridge</h1><p class="muted">AI assistant. Quick, private, not a therapist.</p>
+<div class="card chat">
+<div class="msgs" id="msgs" aria-live="polite"></div>
+<div class="row" id="quick" style="margin:10px 0"></div>
+<div class="row" style="flex-wrap:nowrap"><input id="chatIn" placeholder="Type your message" aria-label="Message" style="flex:1;min-width:0;padding:9px 16px;border:1.5px solid var(--line);font:inherit"><button class="btn" id="chatGo">Send</button></div>
+</div></section>
+
+<section class="view" id="staff">
+<h1>Care team</h1><p class="muted">Verified responders only. You see flagged check-ins from students who allowed contact.</p>
+<div class="row" style="align-items:center;margin-bottom:10px"><span class="badge">Verified responder</span><span class="muted" style="font-size:14px" id="careWho"></span><button class="btn alt" data-signout>Sign out</button></div>
+<div class="card" id="adminBox" hidden style="margin-bottom:12px"></div>
+<p class="muted" id="careMsg"></p>
+<div class="grid" id="cstats"></div>
+<div class="cols" id="careCols" style="align-items:start;margin-top:6px"><div><h2>Flagged queue</h2><div id="queue"></div></div><div><h2>Conversation</h2><div class="card" id="convo"></div></div></div>
+<h2>Campus trends (anonymous)</h2>
+<div class="card"><b>Average stress (1–5)</b><div class="bars" id="bars"></div><div class="labels" id="barLabels"></div></div>
+</section>
+</main></div>
+
+<dialog id="sos"><h2 style="margin-top:0">Urgent help</h2><p class="muted">Tap to call. You are not alone.</p><div id="sosList"></div><button class="btn alt" id="closeSos" style="width:100%;margin-top:6px">Close</button></dialog>
+<dialog id="apply" style="border-color:var(--g)"><h2 style="margin-top:0">Care team application</h2>
+<p class="muted" style="font-size:14px">For licensed professionals. An admin verifies your license before you can reply to students. Already approved? Use the normal Sign in form.</p>
+<form id="apForm" novalidate>
+<label>Full name<input id="apName" autocomplete="name"></label>
+<label>Email<input id="apEmail" type="email" autocomplete="email"></label>
+<label>Password<input id="apPass" type="password" autocomplete="new-password" placeholder="At least 8 characters"></label>
+<label>License number<input id="apLic"></label>
+<label>Licensing body (for example MDCN or a psychology council)<input id="apBody"></label>
+<p class="err" id="apMsg" role="alert"></p>
+<div class="row"><button class="btn" id="apGo" type="submit">Submit application</button><button class="btn alt" type="button" id="apX">Close</button></div></form></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script type="module" src="app.js"></script>
+<noscript>WellBridge needs JavaScript to run.</noscript></body></html>
