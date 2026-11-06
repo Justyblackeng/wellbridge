@@ -45,8 +45,8 @@ create table messages(
   created_at timestamptz not null default now()
 );
 create table counselors(
-  id uuid primary key default gen_random_uuid(),
-  name text not null, specialty text not null
+  id uuid primary key default gen_random_uuid(),name
+  text not null, specialty text not null
 );
 create table bookings(
   id uuid primary key default gen_random_uuid(),
